@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<title>Évaluation du dispositif Savoir-Nager</title>
+<style id="app-style">
+:root{
+  --ink:#132A33;
+  --ink-soft:#4A6169;
+  --ink-faint:#7C9096;
+  --bg:#EFF6F4;
+  --surface:#FFFFFF;
+  --surface-alt:#E3EEEC;
+  --border:#C7D9D6;
+  --accent:#0E7C79;
+  --accent-strong:#095F5D;
+  --accent-pale:#DCEEEC;
+  --coral:#C6532E;
+  --coral-pale:#FBE6DD;
+  --amber:#93610E;
+  --amber-pale:#F6E7CC;
+  --depth-1:#DCEEEC; --depth-2:#C3E3DF; --depth-3:#A2D5CE; --depth-4:#7BC3B9;
+  --depth-5:#4F9E90; --depth-6:#2E8578; --depth-7:#0E5F58;
+  --depth-ink-lo:var(--ink);
+  --depth-ink-hi:#FFFFFF;
+  --shadow:0 1px 2px rgba(19,42,51,.07), 0 8px 22px rgba(19,42,51,.07);
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:20px;
+  --font-display:'Fraunces',Georgia,'Times New Roman',serif;
+  --font-body:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E7F1EF; --ink-soft:#A9C2BF; --ink-faint:#77918D;
+    --bg:#0B1719; --surface:#122327; --surface-alt:#172C31; --border:#26474D;
+    --accent:#4FCFC4; --accent-strong:#7EE0D6; --accent-pale:#14403C;
+    --coral:#F0895F; --coral-pale:#3A231A; --amber:#E3B15C; --amber-pale:#3A2E14;
+    --depth-1:#17302E; --depth-2:#1D3E3A; --depth-3:#245049; --depth-4:#2E6B60;
+    --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB;
+    --depth-ink-lo:var(--ink);
+    --depth-ink-hi:#052220;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E7F1EF; --ink-soft:#A9C2BF; --ink-faint:#77918D;
+  --bg:#0B1719; --surface:#122327; --surface-alt:#172C31; --border:#26474D;
+  --accent:#4FCFC4; --accent-strong:#7EE0D6; --accent-pale:#14403C;
+  --coral:#F0895F; --coral-pale:#3A231A; --amber:#E3B15C; --amber-pale:#3A2E14;
+  --depth-1:#17302E; --depth-2:#1D3E3A; --depth-3:#245049; --depth-4:#2E6B60;
+  --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB;
+  --depth-ink-lo:var(--ink);
+  --depth-ink-hi:#052220;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box;}
+[hidden]{display:none!important;}
+html{color-scheme:light dark;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;}
+::selection{background:var(--accent-pale);}
+a{color:var(--accent-strong);}
+button{font-family:inherit;}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;text-wrap:balance;margin:0;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+.container{max-width:1180px;margin:0 auto;padding:0 20px 64px;}
+@media (max-width:640px){.container{padding:0 14px 48px;}}
+
+/* header */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:22px 20px 0;}
+@media (max-width:640px){.topbar-inner{padding:18px 14px 0;}}
+.eyebrow{
+  font-family:var(--font-body);font-size:12.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent-strong);margin:0 0 6px;
+}
+.admin-chip{
+  display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;font-size:10.5px;
+  font-weight:700;letter-spacing:.04em;background:var(--coral-pale);color:var(--coral);vertical-align:middle;
+}
+.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+h1.page-title{font-size:clamp(26px,3.6vw,34px);}
+.subtitle{color:var(--ink-soft);font-size:14.5px;margin-top:4px;}
+.wave{display:block;width:100%;height:20px;margin-top:18px;}
+.tabs{display:flex;gap:4px;margin-top:16px;}
+.tab-btn{
+  appearance:none;border:none;background:transparent;cursor:pointer;
+  font-family:var(--font-body);font-weight:600;font-size:14.5px;color:var(--ink-soft);
+  padding:11px 4px;border-bottom:3px solid transparent;margin-right:22px;
+}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--accent-strong);border-bottom-color:var(--accent);}
+.tab-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;
+}
+
+/* banners */
+.banner{
+  border-radius:var(--radius-md);padding:13px 16px;font-size:14px;margin:20px 0;
+  display:flex;gap:10px;align-items:flex-start;border:1px solid transparent;
+}
+.banner svg{flex:none;margin-top:2px;}
+.banner-info{background:var(--accent-pale);color:var(--accent-strong);border-color:var(--accent-pale);}
+.banner-warn{background:var(--amber-pale);color:var(--amber);}
+.banner-demo{background:var(--coral-pale);color:var(--coral);}
+.banner strong{font-weight:700;}
+.banner-actions{margin-top:8px;}
+
+/* cards / layout */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);padding:22px;
+}
+.card + .card{margin-top:18px;}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.card-head h2{font-size:19px;}
+.card-head .hint{color:var(--ink-faint);font-size:13px;}
+.section-lede{color:var(--ink-soft);font-size:14.5px;max-width:62ch;margin:14px 0 0;}
+
+/* form */
+.field-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:900px){.field-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.field-grid{grid-template-columns:1fr;}}
+.field-grid.effectif-row{grid-template-columns:220px 1fr;align-items:end;}
+@media (max-width:560px){.field-grid.effectif-row{grid-template-columns:1fr;align-items:start;}}
+.field-grid.two-col{grid-template-columns:1fr 1fr;}
+@media (max-width:520px){.field-grid.two-col{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:12.5px;font-weight:600;color:var(--ink-soft);letter-spacing:.02em;}
+.field input,.field select,.field textarea{
+  font-family:var(--font-body);font-size:15px;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 11px;width:100%;
+}
+.field input:disabled{background:var(--surface-alt);color:var(--ink-faint);}
+.field textarea{resize:vertical;min-height:64px;font-size:14.5px;}
+.field-note{font-size:12px;color:var(--ink-faint);}
+
+.status-chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
+  padding:4px 10px;border-radius:99px;
+}
+.status-chip.new{background:var(--surface-alt);color:var(--ink-soft);}
+.status-chip.existing{background:var(--accent-pale);color:var(--accent-strong);}
+
+/* year lock */
+.year-lock{
+  display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:15px;color:var(--ink);
+  background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 11px;
+}
+.year-lock-note{font-family:var(--font-body);font-size:11px;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em;}
+
+/* stations */
+.stations{
+  display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:16px;
+}
+@media (max-width:1180px){.stations{grid-template-columns:repeat(4,1fr);}}
+@media (max-width:600px){.stations{grid-template-columns:repeat(2,1fr);}}
+.station.fail1{background:var(--coral-pale);color:var(--coral);border-color:transparent;}
+.station.fail1 .num{background:rgba(0,0,0,.08);color:inherit;}
+.station{
+  border-radius:var(--radius-md);padding:13px 12px 14px;border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:8px;min-height:168px;
+}
+.station .num{
+  width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:12.5px;font-weight:600;background:rgba(0,0,0,.08);
+}
+.station .st-title{font-size:12.8px;font-weight:700;line-height:1.25;min-height:32px;}
+.station .st-hint{font-size:11px;opacity:.8;line-height:1.3;flex:1;}
+.station input{
+  margin-top:auto;width:100%;font-family:var(--font-mono);font-size:16px;text-align:center;
+  border-radius:var(--radius-sm);border:1px solid rgba(0,0,0,.18);padding:8px 6px;background:rgba(255,255,255,.55);
+}
+.station input:disabled{opacity:.45;}
+.station .st-max{font-size:10.5px;opacity:.75;text-align:center;}
+.assigned-total{margin-top:12px;font-size:13px;color:var(--ink-soft);}
+.assigned-total strong{font-family:var(--font-mono);color:var(--ink);}
+.assigned-total.warn{color:var(--coral);}
+.assigned-total.warn strong{color:var(--coral);}
+.assigned-total.ok{color:var(--accent-strong);}
+.assigned-total.ok strong{color:var(--accent-strong);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .station input{background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.18);color:inherit;}}
+:root[data-theme="dark"] .station input{background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.18);color:inherit;}
+
+/* buttons */
+.btn{
+  appearance:none;border:1px solid transparent;border-radius:99px;cursor:pointer;
+  font-family:var(--font-body);font-weight:700;font-size:14px;padding:11px 20px;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-strong);}
+.btn-primary:disabled{background:var(--ink-faint);cursor:not-allowed;}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--ink-soft);}
+.btn-ghost:hover{border-color:var(--ink-faint);color:var(--ink);}
+.btn-danger{background:transparent;border-color:var(--coral);color:var(--coral);}
+.btn-danger:hover{background:var(--coral-pale);}
+.btn-sm{padding:7px 13px;font-size:12.5px;}
+.form-actions{display:flex;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap;}
+.save-status{font-size:13px;color:var(--ink-soft);}
+
+/* dashboard */
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:18px 0 4px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;}
+@media (max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:520px){.kpi-grid{grid-template-columns:1fr;}}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px 20px;box-shadow:var(--shadow);
+}
+.kpi .kpi-label{font-size:12.5px;font-weight:600;color:var(--ink-soft);letter-spacing:.02em;}
+.kpi .kpi-value{font-family:var(--font-mono);font-size:30px;font-weight:600;margin-top:6px;letter-spacing:-.01em;}
+.kpi .kpi-value small{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--ink-faint);}
+.kpi .kpi-sub{font-size:12.5px;color:var(--ink-faint);margin-top:4px;}
+
+.funnel{display:flex;flex-direction:column;gap:9px;margin-top:16px;}
+.funnel-row{display:grid;grid-template-columns:150px 1fr 118px;gap:12px;align-items:center;}
+@media (max-width:640px){.funnel-row{grid-template-columns:96px 1fr 84px;}}
+.funnel-label{font-size:12.8px;font-weight:600;}
+.funnel-label .se-code{font-family:var(--font-mono);color:var(--ink-faint);display:block;font-size:11px;font-weight:500;}
+.bar-track{background:var(--surface-alt);border-radius:99px;height:15px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px 0 0 99px;}
+.funnel-figs{font-family:var(--font-mono);font-size:12.5px;text-align:right;color:var(--ink-soft);white-space:nowrap;}
+
+.hist{display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:20px;padding-top:8px;
+  background:linear-gradient(to top,
+    transparent 24.5%, var(--border) 24.5%, var(--border) 25.5%, transparent 25.5%,
+    transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%,
+    transparent 74.5%, var(--border) 74.5%, var(--border) 75.5%, transparent 75.5%);
+}
+.hist-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
+.hist-bar{width:100%;max-width:46px;border-radius:5px 5px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;}
+.hist-bar span{font-family:var(--font-mono);font-size:11px;font-weight:600;}
+.hist-axis{font-size:11px;color:var(--ink-faint);text-align:center;}
+.hist-axis b{display:block;color:var(--ink-soft);font-size:12px;}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.table-wrap{overflow-x:auto;margin-top:14px;}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;}
+td.num,th.num{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums;}
+tr:last-child td{border-bottom:none;}
+.mini-bar{display:inline-flex;align-items:center;gap:8px;width:140px;}
+.mini-bar .bar-track{flex:1;height:8px;}
+.mini-bar .val{font-family:var(--font-mono);font-size:12px;width:38px;text-align:right;}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;font-family:var(--font-mono);}
+.pill-done{background:var(--accent-pale);color:var(--accent-strong);}
+.pill-mid{background:var(--amber-pale);color:var(--amber);}
+.pill-none{background:var(--surface-alt);color:var(--ink-faint);}
+
+.search-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:6px;}
+.search-input{max-width:280px;}
+
+/* toast */
+#toast-host{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;align-items:center;}
+.toast{
+  background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:99px;font-size:13.5px;font-weight:600;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--ink-faint);}
+.school-table-name{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.reduce-motion{transition:none!important;}
+</style>
+</head>
+<body>
+<div id="app-root"></div>
+<div id="toast-host"></div>
+<script>
+(function(){
+"use strict";
+
+/* ---------- connexion au tableur (Google Sheets) ----------
+   Cet outil ne dépend plus de Claude : les saisies sont enregistrées dans un
+   Google Sheet, via un petit script Google Apps Script déployé en « application
+   web ». Collez ici l'URL de ce script une fois déployé (voir le guide de
+   configuration fourni séparément). Tant que ce n'est pas fait, l'outil affiche
+   un bandeau d'avertissement et la sauvegarde reste désactivée. */
+var SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx8AFnP5E5EtsQXzRDN_jrgV7QRcp7EcAZxUscdQnKss_7Ggf91rmbX9-WcYMWHAHvh/exec";
+
+function isApiConfigured(){
+  return /^https:\/\/script\.google\.com\//.test(SHEET_API_URL);
+}
+
+/* Lecture des données (JSONP : contourne les restrictions CORS des scripts
+Google, aucune configuration réseau particulière n'est nécessaire). Ouverte
+en local (double-clic, adresse file://) dans Safari, cette technique peut
+être bloquée — voir le guide de configuration : héberger la page en ligne
+(étape 6) supprime cette limite, qui ne concerne que les fichiers locaux. */
+function sheetGet(onDone){
+  if (!isApiConfigured()){ onDone(null, "not_configured"); return; }
+  var done = false;
+  var cbName = "snCb" + Date.now() + Math.floor(Math.random()*1e6);
+  var script = document.createElement("script");
+  var timer = setTimeout(function(){ finish(null, "timeout"); }, 15000);
+  function cleanup(){
+    clearTimeout(timer);
+    try { window[cbName] = undefined; delete window[cbName]; } catch(e){}
+    if (script.parentNode) script.parentNode.removeChild(script);
+  }
+  function finish(data, err){
+    if (done) return; done = true;
+    cleanup();
+    onDone(data, err);
+  }
+  window[cbName] = function(data){ finish(data, null); };
+  script.onerror = function(){ finish(null, "network"); };
+  script.src = SHEET_API_URL + (SHEET_API_URL.indexOf("?")>=0 ? "&" : "?") + "callback=" + cbName + "&_=" + Date.now();
+  document.body.appendChild(script);
+}
+
+/* Écriture des données (formulaire vers un iframe caché : ne déclenche pas les
+   restrictions CORS d'un appel fetch/XHR classique vers un script Google). On
+   ne peut pas lire la réponse de cette façon, donc l'interface se met à jour
+   de façon optimiste dès l'envoi, sans attendre de confirmation du serveur. */
+function sheetPost(payload, onDone){
+  if (!isApiConfigured()){ if (onDone) onDone(false); return; }
+  var frameName = "sn_tx_" + Date.now() + Math.floor(Math.random()*1e6);
+  var iframe = document.createElement("iframe");
+  iframe.name = frameName;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  var form = document.createElement("form");
+  form.method = "POST";
+  form.action = SHEET_API_URL;
+  form.target = frameName;
+  form.style.display = "none";
+
+  var input = document.createElement("input");
+  input.type = "hidden";
+  input.name = "payload";
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(function(){
+    if (form.parentNode) form.parentNode.removeChild(form);
+    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    if (onDone) onDone(true);
+  }, 1000);
+}
+
+/* ---------- accès tableau de bord ----------
+   Le tableau de bord (statistiques, comparaison par établissement, export) est
+   réservé au référent : il n'est visible que si l'URL contient ?admin=CODE.
+   Ce n'est pas une vraie sécurité (tout se passe côté navigateur), juste un
+   moyen simple d'éviter que les collègues qui utilisent le lien de saisie
+   tombent dessus par erreur. Une fois ouvert avec ce paramètre, l'accès reste
+   actif pour le reste de la session du navigateur (onglet), même en changeant
+   de classe ou en rechargeant la page. */
+var ADMIN_CODE = "mayotte2027";
+function resolveIsAdmin(){
+  try {
+    var q = new URLSearchParams(window.location.search);
+    if (q.get("admin") === ADMIN_CODE){
+      sessionStorage.setItem("sn_admin", "1");
+      return true;
+    }
+  } catch(e){}
+  try { return sessionStorage.getItem("sn_admin") === "1"; } catch(e){ return false; }
+}
+
+/* ---------- domain constants ---------- */
+var STATIONS = [
+  {code:"SE1", title:"Apnée Inspiratoire", hint:"Immersion, expiration contrôlée"},
+  {code:"SE2", title:"Bouchon Flottant", hint:"Flottaison passive en boule"},
+  {code:"SE3", title:"Fusée poussée", hint:"Déplacement subaquatique"},
+  {code:"SE4", title:"Body Surf", hint:"Utilisation d’une vague ou d’un courant"},
+  {code:"SE5", title:"Posture de réf. + reprise de nage", hint:"Retour au calme puis reprise"},
+  {code:"SE6", title:"Idem SE5 + ½ vrille dos", hint:"Reprise avec rotation dorsale"},
+  {code:"SE7", title:"ASNS", hint:"Attestation du Savoir-Nager en Sécurité"}
+];
+var LEVELS = ["6e","5e","4e","3e","2nde","1ère","Terminale","Autre"];
+
+/* Établissements publics du second degré de Mayotte (collèges et lycées polyvalents),
+   d'après la présentation de l'académie de Mayotte (ac-mayotte.fr) et le livret
+   d'accueil 2025-2026 — à revérifier chaque rentrée, le réseau s'agrandit vite. */
+var COLLEGES = [
+  ["Collège Zéna M'Dere","Pamandzi"],
+  ["Collège Bouéni-M'Titi","Dzaoudzi"],
+  ["Collège Halidi Selemani","Mamoudzou"],
+  ["Collège Nelson Mandela","Mamoudzou"],
+  ["Collège de Kawéni 1","Mamoudzou"],
+  ["Collège de Kawéni 2","Mamoudzou"],
+  ["Collège Frédéric d'Achery","Koungou"],
+  ["Collège de Majicavo","Koungou"],
+  ["Collège de M'Tsamboro","M'Tsamboro"],
+  ["Collège Bakari Kusu","Bandraboua"],
+  ["Collège de l'Île aux Parfums","Mtsangamouji"],
+  ["Collège Mariama Salim","Sada"],
+  ["Collège Ali Halidi","Chiconi"],
+  ["Collège de Tsingoni","Tsingoni"],
+  ["Collège Musakua","Ouangani"],
+  ["Collège de Bandrélé","Bandrélé"],
+  ["Collège Marcel Henry","Chirongui"],
+  ["Collège des Ylangs-Ylangs","Kani-Kéli"],
+  ["Collège Zakia Madi","Dembéni"],
+  ["Collège Ouvoimoja","Mamoudzou"],
+  ["Collège de Kwalé","Mamoudzou"],
+  ["Collège de Bouéni","Bouéni"]
+];
+var LYCEES = [
+  ["Lycée Younoussa Bamana","Mamoudzou"],
+  ["Lycée Polyvalent de Kawéni","Mamoudzou"],
+  ["Lycée Polyvalent des Lumières","Mamoudzou"],
+  ["Lycée Polyvalent de Petite-Terre","Pamandzi"],
+  ["Lycée Polyvalent de la Cité du Nord","M'Tsamboro"],
+  ["Lycée Polyvalent de Dzoumogné","Bandraboua"],
+  ["Lycée Polyvalent de Sada","Sada"],
+  ["Lycée Polyvalent Gustave Eiffel","Ouangani"],
+  ["Lycée Tani Malandi","Chirongui"],
+  ["Lycée Polyvalent de Bandrélé","Bandrélé"],
+  ["Lycée de Dembéni","Dembéni"]
+];
+function isKnownSchool(name){
+  var found = false;
+  COLLEGES.concat(LYCEES).forEach(function(s){ if (s[0] === name) found = true; });
+  return found;
+}
+
+/* ---------- utilities ---------- */
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function slugify(s){
+  s = (s == null ? "" : String(s));
+  var out = "";
+  try { out = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch(e){ out = s; }
+  out = out.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  return out || "x";
+}
+function docIdFor(year, school, className){
+  return slugify(year) + "__" + slugify(school) + "__" + slugify(className);
+}
+function currentSchoolYear(d){
+  d = d || new Date();
+  var y = d.getFullYear(), m = d.getMonth();
+  return m >= 7 ? (y + "-" + (y + 1)) : ((y - 1) + "-" + y);
+}
+function schoolYearOptions(){
+  var cur = currentSchoolYear(), y0 = parseInt(cur.slice(0,4),10);
+  var out = [];
+  for (var i=-1;i<=1;i++){ out.push((y0+i) + "-" + (y0+i+1)); }
+  return out;
+}
+function fmtInt(n){ return (n==null || !isFinite(n)) ? "—" : Math.round(n).toLocaleString("fr-FR"); }
+function fmtPct(n){ return (n==null || !isFinite(n)) ? "—" : n.toLocaleString("fr-FR",{maximumFractionDigits:1,minimumFractionDigits:1}) + " %"; }
+function fmtNum1(n){ return (n==null || !isFinite(n)) ? "—" : n.toLocaleString("fr-FR",{maximumFractionDigits:1,minimumFractionDigits:1}); }
+function fmtDate(iso){
+  if (!iso) return "—";
+  try {
+    var d = new Date(iso);
+    return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"});
+  } catch(e){ return "—"; }
+}
+
+/* ---------- record model ---------- */
+function emptyRecord(year, school, className){
+  return {year:year||"", school:school||"", className:className||"", level:"", teacher:"",
+    effectif:null, fail1:null, n:[null,null,null,null,null,null,null], notes:"", updatedAt:null};
+}
+/* fail1 = nombre d'élèves qui n'ont pas réussi la situation 1 (niveau 0).
+   n[i] (i=0..6, situation i+1) = nombre d'élèves dont c'est le DERNIER
+   niveau validé : ils ont réussi les situations précédentes mais pas la
+   suivante (n[6] = ont obtenu l'ASNS). Chaque élève évalué compte dans
+   exactement UNE des 8 cases (fail1, n[0]..n[6]) ; leur somme doit être
+   égale à l'effectif évalué — l'enregistrement est bloqué sinon, donc toute
+   fiche enregistrée est par construction complète et exploitable telle
+   quelle (même si aucun élève n'atteint la situation 7 : c'est un résultat
+   normal, pas une fiche incomplète). */
+function totalAssigned(r){
+  var sum = r.fail1||0;
+  for (var i=0;i<7;i++){ sum += r.n[i]||0; }
+  return sum;
+}
+function isCoherent(r){
+  return r.effectif != null && r.effectif >= 0 && totalAssigned(r) === r.effectif;
+}
+
+function setEffectif(rec, raw){
+  var num = (raw === "" || raw == null) ? null : parseInt(raw, 10);
+  if (!isFinite(num) || num < 0) num = null;
+  rec.effectif = num;
+}
+function setFail1(rec, raw){
+  var num = (raw === "" || raw == null) ? null : parseInt(raw, 10);
+  if (!isFinite(num) || num < 0) num = null;
+  rec.fail1 = num;
+}
+function setStation(rec, idx, raw){
+  var num = (raw === "" || raw == null) ? null : parseInt(raw, 10);
+  if (!isFinite(num) || num < 0) num = null;
+  rec.n[idx] = num;
+}
+
+/* ---------- aggregation ---------- */
+/* Niveau final atteint (0 = a échoué la situation 1, 7 = ASNS). Toute fiche
+   du jeu de données est par construction cohérente (voir isCoherent), donc
+   toutes les fiches participent aux statistiques, sans distinction. */
+function levelDistribution(records){
+  var counts = [0,0,0,0,0,0,0,0];
+  records.forEach(function(r){
+    counts[0] += r.fail1||0;
+    for (var k=0;k<7;k++){ counts[k+1] += r.n[k]||0; }
+  });
+  return counts;
+}
+function avgLevel(records){
+  var dist = levelDistribution(records);
+  var tot = dist.reduce(function(a,b){return a+b;},0);
+  if (!tot) return null;
+  var sum = 0; for (var k=0;k<8;k++){ sum += dist[k]*k; }
+  return sum / tot;
+}
+/* % d'élèves ayant validé AU MOINS la situation i+1 = somme des niveaux i+1 à 7. */
+function stationFunnel(records){
+  var denom = records.reduce(function(s,r){ return s + (r.effectif||0); }, 0);
+  var out = [];
+  for (var i=0;i<7;i++){
+    var reached = records.reduce(function(s,r){
+      var sum = 0;
+      for (var k=i;k<7;k++){ sum += (r.n[k]||0); }
+      return s + sum;
+    }, 0);
+    out.push({idx:i, classes:records.length, reached:reached, denom:denom, pct: denom>0 ? reached/denom*100 : null});
+  }
+  return out;
+}
+function perSchoolStats(records){
+  var map = {}, order = [];
+  records.forEach(function(r){
+    var key = (r.school||"").trim() || "(sans nom)";
+    if (!map[key]){ map[key] = []; order.push(key); }
+    map[key].push(r);
+  });
+  return order.map(function(school){
+    var recs = map[school];
+    var eff = recs.reduce(function(s,r){return s+(r.effectif||0);},0);
+    var se7 = recs.reduce(function(s,r){return s+(r.n[6]||0);},0);
+    return {
+      school: school, classes: recs.length,
+      effectif: eff, pctSE7: eff>0 ? se7/eff*100 : null,
+      avgLevel: avgLevel(recs)
+    };
+  }).sort(function(a,b){
+    var av = a.pctSE7==null? -1:a.pctSE7, bv = b.pctSE7==null? -1:b.pctSE7;
+    return bv - av;
+  });
+}
+
+/* ---------- state ---------- */
+var state = {classes:{}};
+
+var ui = {
+  tab: "saisie",
+  isAdmin: resolveIsAdmin(),
+  identity: {year: currentSchoolYear(), school:"", className:"", level:"", teacher:""},
+  current: null,
+  isExisting: false,
+  confirmDelete: false,
+  schoolOtherMode: false,
+  saving: false,
+  saveMsg: "",
+  readOnly: false,
+  loadState: "loading",
+  dashYear: currentSchoolYear(),
+  dashSearch: ""
+};
+try {
+  var uiRaw = sessionStorage.getItem("sn_ui");
+  if (uiRaw){
+    var savedUi = JSON.parse(uiRaw);
+    if (savedUi && savedUi.tab) ui.tab = savedUi.tab;
+    if (savedUi && savedUi.identity) ui.identity = savedUi.identity;
+    if (savedUi && savedUi.dashYear) ui.dashYear = savedUi.dashYear;
+  }
+} catch(e){}
+if (!ui.isAdmin) ui.tab = "saisie";
+loadCurrentFromIdentity();
+
+function persistUi(){
+  try {
+    sessionStorage.setItem("sn_ui", JSON.stringify({tab:ui.tab, identity:ui.identity, dashYear:ui.dashYear}));
+  } catch(e){}
+}
+
+/* ---------- chargement depuis le tableur ---------- */
+function refreshFromSheet(onDone){
+  ui.loadState = "loading";
+  render();
+  sheetGet(function(data, err){
+    if (err){
+      ui.loadState = "error";
+      ui.loadError = err;
+    } else {
+      state = (data && data.classes) ? data : {classes:{}};
+      ui.loadState = "ready";
+      loadCurrentFromIdentity();
+    }
+    render();
+    if (onDone) onDone(!err);
+  });
+}
+
+function toast(msg){
+  var host = document.getElementById("toast-host");
+  if (!host) return;
+  var el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  host.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add("show"); });
+  setTimeout(function(){
+    el.classList.remove("show");
+    setTimeout(function(){ el.remove(); }, 300);
+  }, 3600);
+}
+
+/* ---------- identity / current record ---------- */
+function loadCurrentFromIdentity(){
+  var id = ui.identity;
+  if (!id.year || !id.school.trim() || !id.className.trim()){
+    ui.current = null; ui.isExisting = false; return;
+  }
+  var docId = docIdFor(id.year, id.school, id.className);
+  var existing = state.classes[docId];
+  if (existing){
+    ui.current = clone(existing);
+    ui.current.level = id.level || ui.current.level;
+    ui.current.teacher = id.teacher || ui.current.teacher;
+    ui.isExisting = true;
+  } else {
+    ui.current = emptyRecord(id.year, id.school, id.className);
+    ui.current.level = id.level;
+    ui.current.teacher = id.teacher;
+    ui.isExisting = false;
+  }
+}
+
+function saveCurrent(){
+  if (!ui.current) return;
+  var rec = ui.current;
+  rec.year = ui.identity.year; rec.school = ui.identity.school.trim();
+  rec.className = ui.identity.className.trim(); rec.level = ui.identity.level;
+  rec.teacher = ui.identity.teacher.trim();
+  if (!rec.year || !rec.school || !rec.className || rec.effectif == null){
+    ui.saveMsg = "Renseignez l’année, l’établissement, la classe et le nombre d’élèves évalués avant d’enregistrer.";
+    render(); return;
+  }
+  if (!isCoherent(rec)){
+    var diff = rec.effectif - totalAssigned(rec);
+    ui.saveMsg = diff > 0
+      ? "Il manque " + diff + " élève(s) à répartir dans les cases avant d’enregistrer."
+      : "La répartition dépasse le nombre d’élèves évalués de " + (-diff) + " : corrigez avant d’enregistrer.";
+    render(); return;
+  }
+  if (!isApiConfigured()){
+    ui.saveMsg = "Outil non configuré : la connexion au tableur n’a pas encore été mise en place.";
+    render(); return;
+  }
+  rec.updatedAt = new Date().toISOString();
+  var id = docIdFor(rec.year, rec.school, rec.className);
+  state.classes[id] = clone(rec);
+  ui.isExisting = true;
+  ui.saving = true; ui.saveMsg = "Enregistrement…";
+  render();
+  sheetPost({action:"save", docId:id, record:rec}, function(){
+    ui.saving = false;
+    ui.saveMsg = "Fiche enregistrée.";
+    render();
+    toast("Fiche enregistrée : " + rec.className + " — " + rec.school);
+  });
+}
+
+function deleteCurrent(){
+  if (!ui.current || !ui.isExisting) return;
+  var rec = ui.current;
+  var id = docIdFor(rec.year, rec.school, rec.className);
+  delete state.classes[id];
+  ui.current = emptyRecord(rec.year, rec.school, rec.className);
+  ui.current.level = ui.identity.level;
+  ui.current.teacher = ui.identity.teacher;
+  ui.isExisting = false;
+  render();
+  sheetPost({action:"delete", docId:id}, function(){
+    toast("Fiche supprimée : " + rec.className);
+  });
+}
+
+/* ---------- rendering ---------- */
+function allRecords(){ return Object.keys(state.classes).map(function(k){ return state.classes[k]; }); }
+function recordsForYear(y){
+  var all = allRecords();
+  return y === "__all__" ? all : all.filter(function(r){ return r.year === y; });
+}
+function yearsPresent(){
+  var set = {};
+  allRecords().forEach(function(r){ if (r.year) set[r.year] = true; });
+  schoolYearOptions().forEach(function(y){ set[y] = true; });
+  return Object.keys(set).sort();
+}
+
+function waveSvg(){
+  return '<svg class="wave" viewBox="0 0 600 20" preserveAspectRatio="none" aria-hidden="true">'
+    + '<path d="M0 12 C 50 2, 100 2, 150 12 S 250 22, 300 12 S 400 2, 450 12 S 550 22, 600 12" '
+    + 'fill="none" stroke="var(--depth-4)" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<path d="M0 16 C 50 8, 100 8, 150 16 S 250 24, 300 16 S 400 8, 450 16 S 550 24, 600 16" '
+    + 'fill="none" stroke="var(--depth-6)" stroke-width="2" stroke-linecap="round" opacity=".6"/>'
+    + '</svg>';
+}
+
+function renderHeader(){
+  var out = "";
+  out += '<div class="topbar"><div class="topbar-inner">';
+  out += '<p class="eyebrow">Académie de Mayotte' + (ui.isAdmin ? ' <span class="admin-chip">Mode référent</span>' : '') + '</p>';
+  out += '<div class="title-row"><h1 class="page-title">Évaluation du dispositif Savoir-Nager</h1>';
+  out += '<span class="subtitle">Suivi des 7 situations d’évaluation, établissement par établissement</span></div>';
+  out += waveSvg();
+  if (ui.isAdmin){
+    out += '<div class="tabs">';
+    out += '<button class="tab-btn' + (ui.tab==="saisie"?" active":"") + '" data-action="tab" data-tab="saisie">Saisie par classe</button>';
+    out += '<button class="tab-btn' + (ui.tab==="dashboard"?" active":"") + '" data-action="tab" data-tab="dashboard">Tableau de bord</button>';
+    out += '</div>';
+  }
+  out += '</div></div>';
+  return out;
+}
+
+function renderStatusBanner(){
+  if (!isApiConfigured()){
+    return '<div class="banner banner-warn">' + iconInfo() + '<div><strong>Configuration requise.</strong> Cet outil n’est pas encore relié à un tableur. Le référent doit coller l’URL du script Google dans le fichier (voir le guide de configuration fourni).</div></div>';
+  }
+  if (ui.loadState === "loading"){
+    return '<div class="banner banner-info">' + iconInfo() + '<div>Chargement des données…</div></div>';
+  }
+  if (ui.loadState === "error"){
+    return '<div class="banner banner-warn">' + iconInfo() + '<div><strong>Connexion impossible.</strong> Les données affichées peuvent être incomplètes ou obsolètes. Vérifiez la connexion internet, puis rechargez la page.</div></div>';
+  }
+  return "";
+}
+
+function iconInfo(){
+  return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v4.2M8 4.8v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+}
+
+function renderSaisie(){
+  var out = '<div class="container">';
+  out += renderStatusBanner();
+  out += '<div class="card">';
+  out += '<div class="card-head"><h2>1 · Identifier la classe</h2><span class="hint">Les champs se souviennent des établissements déjà saisis</span></div>';
+  out += '<p class="section-lede">Établissements du second degré de Mayotte (collèges et lycées, 6e à Terminale). Si une fiche existe déjà pour la classe choisie, elle se recharge automatiquement pour être complétée ou corrigée.</p>';
+  out += '<div class="field-grid" style="margin-top:16px;">';
+  out += '<div class="field"><label>Année scolaire</label><div class="year-lock">' + esc(ui.identity.year) + '<span class="year-lock-note">verrouillée</span></div></div>';
+  out += renderSchoolField();
+  out += fieldText("Classe", "identity-className", ui.identity.className, "ex. 3e A, Term. Bac Pro 2…");
+  out += fieldSelect("Niveau", "identity-level", [""].concat(LEVELS), ui.identity.level, true);
+  out += '</div>';
+  out += '<div class="field-grid two-col" style="margin-top:14px;">';
+  out += fieldText("Enseignant·e (optionnel)", "identity-teacher", ui.identity.teacher, "Nom, initiale…");
+  out += '<div class="field"><label>Statut de la fiche</label>' + statusChip() + '</div>';
+  out += '</div>';
+  out += '</div>';
+
+  if (ui.current){
+    out += '<div class="card">';
+    out += '<div class="card-head"><h2>2 · Répartition des élèves par situation</h2><span class="hint">Une case = un dernier niveau validé</span></div>';
+    out += '<p class="section-lede">Pour chaque situation, indiquez combien d’élèves s’y arrêtent : ils ont validé les situations précédentes mais pas la suivante (situation 7 = ont obtenu l’ASNS). Si un·e élève échoue dès la situation 1, comptez-le dans la première case, à part. Chaque élève évalué compte dans une seule case, et la somme des cases doit être exactement égale au nombre d’élèves évalués.</p>';
+    out += '<div class="field-grid effectif-row" style="margin-top:16px;">';
+    out += fieldNumber("Nombre d’élèves évalués", "effectif", ui.current.effectif, 0, 200);
+    out += '<div class="field-note" style="align-self:center;">Élèves ayant réellement participé à l’évaluation, y compris ceux qui échouent dès la situation 1 — hors dispensés, absents ou exclus. Ce nombre doit être exactement égal à la somme des cases ci-dessous.</div>';
+    out += '</div>';
+    out += '<div class="stations">';
+    out += renderFail1Card();
+    for (var i=0;i<7;i++){ out += renderStation(i); }
+    out += '</div>';
+    out += renderAssignedTotal(ui.current);
+    out += '<div class="field" style="margin-top:16px;"><label>Remarques (optionnel)</label>';
+    out += '<textarea data-field="notes" ' + (ui.readOnly?"disabled":"") + ' placeholder="Créneau piscine, conditions particulières…">' + esc(ui.current.notes||"") + '</textarea></div>';
+
+    out += '<div class="form-actions">';
+    var canSave = !ui.saving && !ui.readOnly && isCoherent(ui.current);
+    out += '<button class="btn btn-primary" data-action="save" ' + (canSave?"":"disabled") + '>' + (ui.saving?"Enregistrement…":"Enregistrer la fiche") + '</button>';
+    if (ui.isExisting && !ui.readOnly){
+      if (ui.confirmDelete){
+        out += '<button class="btn btn-danger" data-action="delete-confirm">Confirmer la suppression</button>';
+        out += '<button class="btn btn-ghost" data-action="delete-cancel">Annuler</button>';
+      } else {
+        out += '<button class="btn btn-ghost" data-action="delete-ask">Supprimer cette fiche</button>';
+      }
+    }
+    if (ui.saveMsg) out += '<span class="save-status">' + esc(ui.saveMsg) + '</span>';
+    out += '</div>';
+    out += '</div>';
+  } else {
+    out += '<div class="card"><div class="empty-state">Renseignez l’année, l’établissement et la classe ci-dessus pour afficher la fiche de saisie.</div></div>';
+  }
+  out += '</div>';
+  return out;
+}
+
+function statusChip(){
+  if (!ui.current) return '<span class="status-chip new">En attente</span>';
+  if (ui.isExisting){
+    return '<span class="status-chip existing">Fiche existante · MàJ le ' + fmtDate(ui.current.updatedAt) + '</span>';
+  }
+  return '<span class="status-chip new">Nouvelle fiche</span>';
+}
+
+function renderStation(i){
+  var st = STATIONS[i];
+  var rec = ui.current;
+  var depthN = i+1;
+  var inkCls = i < 4 ? "var(--depth-ink-lo)" : "var(--depth-ink-hi)";
+  var val = rec.n[i];
+  var stopLabel = i===6 ? "ont obtenu l’ASNS" : "s’arrêtent ici";
+  var out = '<div class="station" style="background:var(--depth-' + depthN + ');color:' + inkCls + ';border-color:transparent;">';
+  out += '<span class="num" style="color:' + inkCls + ';">' + (i+1) + '</span>';
+  out += '<span class="st-title">' + esc(st.code) + ' · ' + esc(st.title) + '</span>';
+  out += '<span class="st-hint">' + esc(st.hint) + '</span>';
+  out += '<input type="number" min="0" max="' + (rec.effectif==null?"":rec.effectif) + '" inputmode="numeric" data-station="' + i + '" ' + (ui.readOnly?"disabled":"") + ' value="' + (val==null?"":val) + '" placeholder="0">';
+  out += '<span class="st-max">élèves qui ' + stopLabel + '</span>';
+  out += '</div>';
+  return out;
+}
+
+function renderFail1Card(){
+  var rec = ui.current;
+  var val = rec.fail1;
+  var out = '<div class="station fail1">';
+  out += '<span class="num">0</span>';
+  out += '<span class="st-title">N’ont pas réussi la situation 1</span>';
+  out += '<span class="st-hint">Apnée inspiratoire non validée</span>';
+  out += '<input type="number" min="0" inputmode="numeric" data-field="fail1" ' + (ui.readOnly?"disabled":"") + ' value="' + (val==null?"":val) + '" placeholder="0">';
+  out += '<span class="st-max">élèves qui échouent dès la situation 1</span>';
+  out += '</div>';
+  return out;
+}
+
+function renderAssignedTotal(rec){
+  var assigned = totalAssigned(rec);
+  var eff = rec.effectif;
+  var coherent = isCoherent(rec);
+  var cls = coherent ? "assigned-total ok" : "assigned-total warn";
+  var out = '<div id="assigned-total" class="' + cls + '">';
+  out += 'Total réparti (échec situation 1 + 7 situations) : <strong>' + assigned + (eff==null ? '' : (' / ' + eff)) + '</strong>';
+  if (eff == null){
+    out += ' — indiquez d’abord le nombre d’élèves évalués.';
+  } else if (assigned > eff){
+    out += ' — dépasse le nombre d’élèves évalués (' + (assigned - eff) + ' de trop) : la fiche ne peut pas être enregistrée.';
+  } else if (assigned < eff){
+    out += ' — il manque ' + (eff - assigned) + ' élève(s) à répartir : la fiche ne peut pas être enregistrée.';
+  } else {
+    out += ' — la répartition est cohérente, la fiche peut être enregistrée.';
+  }
+  out += '</div>';
+  return out;
+}
+
+function renderSchoolField(){
+  var val = ui.identity.school || "";
+  var isOther = ui.schoolOtherMode || (val !== "" && !isKnownSchool(val));
+  var out = '<div class="field"><label>Établissement</label>';
+  out += '<select data-field="identity-school-select" ' + (ui.readOnly?"disabled":"") + '>';
+  out += '<option value=""' + (val===""?" selected":"") + '>— Choisir un établissement —</option>';
+  out += '<optgroup label="Collèges">';
+  COLLEGES.forEach(function(s){
+    out += '<option value="' + esc(s[0]) + '"' + (val===s[0]?" selected":"") + '>' + esc(s[0]) + ' — ' + esc(s[1]) + '</option>';
+  });
+  out += '</optgroup><optgroup label="Lycées">';
+  LYCEES.forEach(function(s){
+    out += '<option value="' + esc(s[0]) + '"' + (val===s[0]?" selected":"") + '>' + esc(s[0]) + ' — ' + esc(s[1]) + '</option>';
+  });
+  out += '</optgroup>';
+  out += '<option value="__other__"' + (isOther?" selected":"") + '>Autre établissement (à préciser)</option>';
+  out += '</select>';
+  if (isOther){
+    out += '<input type="text" data-field="identity-school-other" value="' + esc(val) + '" placeholder="Nom de l’établissement" style="margin-top:8px;" ' + (ui.readOnly?"disabled":"") + '>';
+  }
+  out += '</div>';
+  return out;
+}
+
+function fieldText(label, key, val, placeholder){
+  return '<div class="field"><label>' + esc(label) + '</label><input type="text" data-field="' + key + '" value="' + esc(val||"") + '" placeholder="' + esc(placeholder||"") + '" ' + (ui.readOnly?"disabled":"") + '></div>';
+}
+function fieldSelect(label, key, options, val, allowEmpty){
+  var out = '<div class="field"><label>' + esc(label) + '</label><select data-field="' + key + '" ' + (ui.readOnly?"disabled":"") + '>';
+  options.forEach(function(o){
+    out += '<option value="' + esc(o) + '"' + (o===val?" selected":"") + '>' + (o===""&&allowEmpty ? "—" : esc(o)) + '</option>';
+  });
+  out += '</select></div>';
+  return out;
+}
+function fieldNumber(label, key, val, min, max){
+  return '<div class="field"><label>' + esc(label) + '</label><input type="number" min="' + min + '" max="' + max + '" data-field="' + key + '" value="' + (val==null?"":val) + '" ' + (ui.readOnly?"disabled":"") + '></div>';
+}
+
+/* ---------- dashboard ---------- */
+function renderDashboard(){
+  var records = recordsForYear(ui.dashYear);
+  var funnel = stationFunnel(records);
+  var dist = levelDistribution(records);
+  var maxDist = Math.max.apply(null, dist.concat([1]));
+  var schools = perSchoolStats(records).filter(function(s){ return ui.dashSearch ? s.school.toLowerCase().indexOf(ui.dashSearch.toLowerCase())>=0 : true; });
+  var totalEff = records.reduce(function(s,r){return s+(r.effectif||0);},0);
+  var se7 = funnel[6];
+  var avg = avgLevel(records);
+  var distinctSchools = {}; records.forEach(function(r){ if(r.school) distinctSchools[r.school]=true; });
+
+  var out = '<div class="container">';
+  out += renderStatusBanner();
+
+  out += '<div class="filters">';
+  out += '<div class="field"><label>Année scolaire</label><select data-field="dashYear">';
+  yearsPresent().forEach(function(y){ out += '<option value="' + esc(y) + '"' + (y===ui.dashYear?" selected":"") + '>' + esc(y) + '</option>'; });
+  out += '<option value="__all__"' + (ui.dashYear==="__all__"?" selected":"") + '>Toutes les années</option>';
+  out += '</select></div>';
+  out += '<button class="btn btn-ghost btn-sm" data-action="refresh-data" ' + (ui.loadState==="loading"?"disabled":"") + '>' + (ui.loadState==="loading"?"Actualisation…":"Actualiser") + '</button>';
+  out += '<button class="btn btn-ghost btn-sm" data-action="export-csv">Exporter en CSV</button>';
+  out += '</div>';
+
+  out += '<div class="kpi-grid">';
+  out += kpi("Élèves évalués", fmtInt(totalEff), records.length + " classe(s) saisie(s)");
+  out += kpi("Ont validé l’ASNS (SE7)", fmtInt(se7.reached), (se7.pct==null?"aucune fiche saisie":(fmtPct(se7.pct) + " des élèves évalués")));
+  out += kpi("Niveau moyen atteint", (avg==null?"—":fmtNum1(avg) + '<small> / 7</small>'), "sur " + records.length + " classe(s)");
+  out += kpi("Établissements", fmtInt(Object.keys(distinctSchools).length), records.length + " fiche(s) de classe au total");
+  out += '</div>';
+
+  out += '<div class="card">';
+  out += '<div class="card-head"><h2>Progression dans les 7 situations</h2><span class="hint">% d’élèves évalués ayant validé au moins cette situation</span></div>';
+  out += '<div class="funnel">';
+  funnel.forEach(function(f){
+    var st = STATIONS[f.idx];
+    var pct = f.pct==null ? 0 : f.pct;
+    out += '<div class="funnel-row">';
+    out += '<div class="funnel-label">' + esc(st.title) + '<span class="se-code">' + esc(st.code) + '</span></div>';
+    out += '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:var(--depth-' + (f.idx+1) + ');"></div></div>';
+    out += '<div class="funnel-figs">' + (f.pct==null?"—":fmtPct(f.pct)) + ' · ' + fmtInt(f.reached) + '/' + fmtInt(f.denom) + '</div>';
+    out += '</div>';
+  });
+  out += '</div></div>';
+
+  out += '<div class="card">';
+  out += '<div class="card-head"><h2>Niveau final atteint</h2><span class="hint">Tous les élèves évalués (0 = SE1 non validée)</span></div>';
+  out += '<div class="hist">';
+  for (var k=0;k<8;k++){
+    var h = maxDist>0 ? Math.round((dist[k]/maxDist)*100) : 0;
+    var depthIdx = k===0 ? 1 : k;
+    var inkc = k<=4 ? "var(--depth-ink-lo)" : "var(--depth-ink-hi)";
+    out += '<div class="hist-col"><div class="hist-bar" style="height:' + Math.max(h,3) + '%;background:var(--depth-' + depthIdx + ');color:' + inkc + ';"><span>' + fmtInt(dist[k]) + '</span></div>';
+    var axisCaption = k===0 ? "SE1 non validée" : (k===7 ? "ASNS validée" : "jusqu’à SE" + k);
+    out += '<div class="hist-axis"><b>' + k + '</b>' + esc(axisCaption) + '</div></div>';
+  }
+  out += '</div></div>';
+
+  out += '<div class="card">';
+  out += '<div class="card-head"><h2>Comparaison par établissement</h2><span class="hint">% des élèves évalués ayant validé les 7 situations (0 % est un résultat normal, pas une anomalie)</span></div>';
+  out += '<div class="search-row"><input class="field search-input" data-field="dashSearch" type="text" placeholder="Filtrer un établissement…" value="' + esc(ui.dashSearch) + '"></div>';
+  out += '<div class="table-wrap"><table><thead><tr><th>Établissement</th><th class="num">Classes</th><th class="num">Effectif</th><th>% ASNS</th><th class="num">Niveau moyen</th></tr></thead><tbody>';
+  if (!schools.length){
+    out += '<tr><td colspan="5"><div class="empty-state">Aucun établissement pour ce filtre.</div></td></tr>';
+  }
+  schools.forEach(function(s){
+    out += '<tr><td class="school-table-name">' + esc(s.school) + '</td><td class="num">' + s.classes + '</td><td class="num">' + fmtInt(s.effectif) + '</td>';
+    out += '<td><span class="mini-bar"><span class="bar-track"><span class="bar-fill" style="display:block;width:' + (s.pctSE7||0) + '%;background:var(--accent);"></span></span><span class="val">' + (s.pctSE7==null?"—":fmtPct(s.pctSE7)) + '</span></span></td>';
+    out += '<td class="num">' + (s.avgLevel==null?"—":fmtNum1(s.avgLevel) + " / 7") + '</td></tr>';
+  });
+  out += '</tbody></table></div></div>';
+
+  out += '<div class="card">';
+  out += '<div class="card-head"><h2>Suivi de la saisie</h2><span class="hint">' + records.length + ' fiche(s)</span></div>';
+  out += '<div class="table-wrap"><table><thead><tr><th>Établissement</th><th>Classe</th><th>Niveau</th><th class="num">Effectif</th><th class="num">ASNS obtenue</th><th>Dernière mise à jour</th><th></th></tr></thead><tbody>';
+  var sortedRecords = records.slice().sort(function(a,b){ return (b.updatedAt||"").localeCompare(a.updatedAt||""); });
+  if (!sortedRecords.length){
+    out += '<tr><td colspan="7"><div class="empty-state">Aucune fiche saisie pour cette année.</div></td></tr>';
+  }
+  sortedRecords.forEach(function(r){
+    var asns = r.n[6]||0;
+    var pillCls = asns>0 ? "pill-done" : "pill-none";
+    out += '<tr><td class="school-table-name">' + esc(r.school) + '</td><td>' + esc(r.className) + '</td><td>' + esc(r.level||"—") + '</td>';
+    out += '<td class="num">' + fmtInt(r.effectif) + '</td><td><span class="pill ' + pillCls + '">' + asns + ' / ' + fmtInt(r.effectif) + '</span></td>';
+    out += '<td>' + fmtDate(r.updatedAt) + '</td><td><button class="btn btn-ghost btn-sm" data-action="edit-record" data-year="' + esc(r.year) + '" data-school="' + esc(r.school) + '" data-classname="' + esc(r.className) + '">Modifier</button></td></tr>';
+  });
+  out += '</tbody></table></div></div>';
+
+  out += '</div>';
+  return out;
+}
+
+function kpi(label, value, sub){
+  return '<div class="kpi"><div class="kpi-label">' + esc(label) + '</div><div class="kpi-value">' + value + '</div><div class="kpi-sub">' + esc(sub) + '</div></div>';
+}
+
+function render(){
+  var root = document.getElementById("app-root");
+  var showDashboard = ui.isAdmin && ui.tab === "dashboard";
+  root.innerHTML = renderHeader() + (showDashboard ? renderDashboard() : renderSaisie());
+}
+
+/* ---------- events (delegated) ---------- */
+document.addEventListener("click", function(e){
+  var btn = e.target.closest("[data-action]");
+  if (!btn) return;
+  var action = btn.getAttribute("data-action");
+  if (action === "tab"){
+    ui.tab = btn.getAttribute("data-tab"); persistUi();
+    if (ui.tab === "dashboard" && ui.isAdmin){ refreshFromSheet(); } else { render(); }
+  } else if (action === "save"){
+    saveCurrent();
+  } else if (action === "delete-ask"){
+    ui.confirmDelete = true; render();
+  } else if (action === "delete-cancel"){
+    ui.confirmDelete = false; render();
+  } else if (action === "delete-confirm"){
+    ui.confirmDelete = false; deleteCurrent();
+  } else if (action === "refresh-data"){
+    refreshFromSheet();
+  } else if (action === "edit-record"){
+    ui.identity.year = btn.getAttribute("data-year");
+    ui.identity.school = btn.getAttribute("data-school");
+    ui.identity.className = btn.getAttribute("data-classname");
+    loadCurrentFromIdentity();
+    ui.tab = "saisie"; persistUi(); render();
+    window.scrollTo({top:0, behavior:"smooth"});
+  } else if (action === "export-csv"){
+    doExportCsv();
+  }
+});
+
+function fieldSelector(t){
+  if (t.hasAttribute("data-field")) return '[data-field="' + t.getAttribute("data-field") + '"]';
+  if (t.hasAttribute("data-station")) return '[data-station="' + t.getAttribute("data-station") + '"]';
+  return null;
+}
+
+document.addEventListener("input", function(e){
+  var t = e.target;
+  if (!(t.matches("[data-field]") || t.matches("[data-station]"))) return;
+
+  var selector = fieldSelector(t);
+  /* Les champs type="number" ne supportent pas selectionStart/selectionEnd :
+     Safari et Firefox lèvent une exception rien qu'à la LECTURE (Chrome, lui,
+     rend juste null) — sans ce garde-fou, cette exception interrompait tout
+     le traitement du champ AVANT même la mise à jour de son état interne,
+     empêchant l'enregistrement de la valeur tapée dans ces cases. */
+  var selStart = null, selEnd = null;
+  if (t.type !== "number"){
+    try {
+      selStart = (typeof t.selectionStart === "number") ? t.selectionStart : null;
+      selEnd = (typeof t.selectionEnd === "number") ? t.selectionEnd : null;
+    } catch(err){ selStart = null; selEnd = null; }
+  }
+  var needsRender = true;
+  /* effectif / fail1 / cases par situation : ces champs sont mis à jour
+     « en place » (voir plus bas) plutôt que via un re-rendu complet, qui
+     recrée le champ en cours de saisie à chaque frappe et lui fait perdre
+     le focus/curseur (au mieux le curseur saute, au pire — Safari, Firefox
+     — la frappe est carrément perdue) : voir updateTallyUI(). */
+  var isNumericTally = false;
+
+  if (t.matches("[data-field]")){
+    var key = t.getAttribute("data-field");
+    if (key === "dashSearch"){
+      ui.dashSearch = t.value;
+    } else if (key === "dashYear"){
+      needsRender = false; /* handled on change */
+    } else if (key === "notes"){
+      if (ui.current) ui.current.notes = t.value;
+      needsRender = false;
+    } else if (key === "effectif"){
+      if (ui.current) setEffectif(ui.current, t.value);
+      isNumericTally = true;
+    } else if (key === "fail1"){
+      if (ui.current) setFail1(ui.current, t.value);
+      isNumericTally = true;
+    } else if (key === "identity-school-select"){
+      needsRender = false; /* handled on change */
+    } else if (key === "identity-school-other"){
+      ui.schoolOtherMode = true;
+      ui.identity.school = t.value;
+      loadCurrentFromIdentity();
+    } else if (key.indexOf("identity-") === 0){
+      var idKey = key.slice("identity-".length);
+      ui.identity[idKey] = t.value;
+      if (idKey === "className" || idKey === "year"){
+        loadCurrentFromIdentity();
+      } else if (ui.current){
+        ui.current[idKey] = t.value;
+      }
+    }
+  } else if (t.matches("[data-station]")){
+    var idx = parseInt(t.getAttribute("data-station"), 10);
+    if (ui.current) setStation(ui.current, idx, t.value);
+    isNumericTally = true;
+  }
+
+  if (isNumericTally){
+    updateTallyUI();
+    return;
+  }
+
+  if (!needsRender) return;
+  render();
+  if (selector){
+    var el = document.querySelector(selector);
+    if (el){
+      el.focus();
+      if (selStart != null && el.setSelectionRange){
+        try { el.setSelectionRange(selStart, selEnd); } catch(err){}
+      }
+    }
+  }
+});
+
+/* Met à jour le total réparti et l'état du bouton Enregistrer sans toucher
+   aux champs de saisie eux-mêmes (voir isNumericTally ci-dessus). */
+function updateTallyUI(){
+  if (!ui.current) return;
+  var totalBox = document.getElementById("assigned-total");
+  if (totalBox) totalBox.outerHTML = renderAssignedTotal(ui.current);
+  var saveBtn = document.querySelector('[data-action="save"]');
+  if (saveBtn) saveBtn.disabled = ui.saving || ui.readOnly || !isCoherent(ui.current);
+}
+
+document.addEventListener("change", function(e){
+  var t = e.target;
+  if (t.matches("[data-field]")){
+    var key = t.getAttribute("data-field");
+    if (key === "dashYear"){
+      ui.dashYear = t.value; persistUi(); render();
+    } else if (key === "identity-school-select"){
+      ui.schoolOtherMode = (t.value === "__other__");
+      ui.identity.school = ui.schoolOtherMode ? "" : t.value;
+      loadCurrentFromIdentity();
+      render();
+      if (ui.schoolOtherMode){
+        var other = document.querySelector('[data-field="identity-school-other"]');
+        if (other) other.focus();
+      }
+    }
+  }
+});
+
+function doExportCsv(){
+  var records = recordsForYear(ui.dashYear);
+  var headers = ["Année","Établissement","Classe","Niveau","Enseignant","Élèves_évalués","Échec_SE1",
+    "Arrêt_SE1_Apnée","Arrêt_SE2_Bouchon","Arrêt_SE3_Fusée","Arrêt_SE4_BodySurf","Arrêt_SE5_Posture","Arrêt_SE6_Vrille","Arrêt_SE7_ASNS","MàJ"];
+  function csvField(v){
+    if (v == null) return "";
+    var s = String(v);
+    if (/[;"\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  var lines = [headers.join(";")];
+  records.forEach(function(r){
+    var row = [r.year, r.school, r.className, r.level, r.teacher, r.effectif, r.fail1]
+      .concat(r.n).concat([r.updatedAt ? fmtDate(r.updatedAt) : ""]);
+    lines.push(row.map(csvField).join(";"));
+  });
+  var csv = "﻿" + lines.join("\r\n");
+  try {
+    var blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "savoir-nager-" + (ui.dashYear==="__all__"?"toutes-annees":ui.dashYear) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    toast("Export CSV téléchargé.");
+  } catch(e){
+    toast("Export impossible dans ce navigateur.");
+  }
+}
+
+/* ---------- init ---------- */
+function init(){
+  render();
+  refreshFromSheet();
+}
+init();
+})();
+</script>
+</body>
+</html>
