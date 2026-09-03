@@ -310,7 +310,7 @@ function sheetGet(onDone){
   var done = false;
   var cbName = "snCb" + Date.now() + Math.floor(Math.random()*1e6);
   var script = document.createElement("script");
-  var timer = setTimeout(function(){ finish(null, "timeout"); }, 15000);
+  var timer = setTimeout(function(){ finish(null, "timeout"); }, 30000);
   function cleanup(){
     clearTimeout(timer);
     try { window[cbName] = undefined; delete window[cbName]; } catch(e){}
