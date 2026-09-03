@@ -385,7 +385,7 @@ var STATIONS = [
   {code:"SE1", title:"Apnée Inspiratoire", hint:"Immersion, expiration contrôlée"},
   {code:"SE2", title:"Bouchon Flottant", hint:"Flottaison passive en boule"},
   {code:"SE3", title:"Fusée poussée", hint:"Déplacement subaquatique"},
-  {code:"SE4", title:"Body Surf", hint:"Utilisation d’une vague ou d’un courant"},
+  {code:"SE4", title:"Body Surf", hint:"Record de distance à partir d’un simple plongeon (5/7m)"},
   {code:"SE5", title:"Posture de réf. + reprise de nage", hint:"Retour au calme puis reprise"},
   {code:"SE6", title:"Idem SE5 + ½ vrille dos", hint:"Reprise avec rotation dorsale"},
   {code:"SE7", title:"ASNS", hint:"Attestation du Savoir-Nager en Sécurité"}
@@ -771,7 +771,7 @@ function renderSaisie(){
   out += renderStatusBanner();
   out += '<div class="card">';
   out += '<div class="card-head"><h2>1 · Identifier la classe</h2><span class="hint">Les champs se souviennent des établissements déjà saisis</span></div>';
-  out += '<p class="section-lede">Établissements du second degré de Mayotte (collèges et lycées, 6e à Terminale). Si une fiche existe déjà pour la classe choisie, elle se recharge automatiquement pour être complétée ou corrigée.</p>';
+  out += '<p class="section-lede">Établissements du second degré de Mayotte (collèges et lycées, 6e à Terminale). En cas d’erreur, ressaisissez la classe, cela écrasera l’ancienne saisie.</p>';
   out += '<div class="field-grid" style="margin-top:16px;">';
   out += '<div class="field"><label>Année scolaire</label><div class="year-lock">' + esc(ui.identity.year) + '<span class="year-lock-note">verrouillée</span></div></div>';
   out += renderSchoolField();
