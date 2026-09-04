@@ -263,6 +263,11 @@ table{width:100%;border-collapse:collapse;font-size:13.5px;}
 th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
 th{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);font-weight:600;}
 td.num,th.num{font-family:var(--font-mono);text-align:right;font-variant-numeric:tabular-nums;}
+.th-sort{background:none;border:none;padding:0;margin:0;font:inherit;text-transform:inherit;letter-spacing:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:3px;}
+th.num .th-sort{width:100%;justify-content:flex-end;}
+.th-sort:hover{color:var(--ink-soft);}
+th.sorted .th-sort{color:var(--accent-strong);}
+.th-sort .sort-arrow{font-size:9px;}
 tr:last-child td{border-bottom:none;}
 .mini-bar{display:inline-flex;align-items:center;gap:8px;width:140px;}
 .mini-bar .bar-track{flex:1;height:8px;}
@@ -574,9 +579,16 @@ function perSchoolStats(records){
       effectif: eff, pctSE7: eff>0 ? se7/eff*100 : null,
       avgLevel: avgLevel(recs)
     };
-  }).sort(function(a,b){
-    var av = a.pctSE7==null? -1:a.pctSE7, bv = b.pctSE7==null? -1:b.pctSE7;
-    return bv - av;
+  });
+}
+function sortSchools(list, key, dir){
+  var mul = dir === "asc" ? 1 : -1;
+  return list.slice().sort(function(a,b){
+    var av = a[key], bv = b[key];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return mul * (av - bv);
   });
 }
 
@@ -596,7 +608,8 @@ var ui = {
   readOnly: false,
   loadState: "loading",
   dashYear: currentSchoolYear(),
-  dashSearch: ""
+  dashSearch: "",
+  dashSort: {key:"pctSE7", dir:"desc"}
 };
 try {
   var uiRaw = sessionStorage.getItem("sn_ui");
@@ -605,6 +618,7 @@ try {
     if (savedUi && savedUi.tab) ui.tab = savedUi.tab;
     if (savedUi && savedUi.identity) ui.identity = savedUi.identity;
     if (savedUi && savedUi.dashYear) ui.dashYear = savedUi.dashYear;
+    if (savedUi && savedUi.dashSort && savedUi.dashSort.key) ui.dashSort = savedUi.dashSort;
   }
 } catch(e){}
 if (!ui.isAdmin) ui.tab = "saisie";
@@ -612,7 +626,7 @@ loadCurrentFromIdentity();
 
 function persistUi(){
   try {
-    sessionStorage.setItem("sn_ui", JSON.stringify({tab:ui.tab, identity:ui.identity, dashYear:ui.dashYear}));
+    sessionStorage.setItem("sn_ui", JSON.stringify({tab:ui.tab, identity:ui.identity, dashYear:ui.dashYear, dashSort:ui.dashSort}));
   } catch(e){}
 }
 
@@ -932,7 +946,7 @@ function renderDashboard(){
   var funnel = stationFunnel(records);
   var dist = levelDistribution(records);
   var maxDist = Math.max.apply(null, dist.concat([1]));
-  var schools = perSchoolStats(records).filter(function(s){ return ui.dashSearch ? s.school.toLowerCase().indexOf(ui.dashSearch.toLowerCase())>=0 : true; });
+  var schools = sortSchools(perSchoolStats(records).filter(function(s){ return ui.dashSearch ? s.school.toLowerCase().indexOf(ui.dashSearch.toLowerCase())>=0 : true; }), ui.dashSort.key, ui.dashSort.dir);
   var totalEff = records.reduce(function(s,r){return s+(r.effectif||0);},0);
   var se7 = funnel[7];
   var avg = avgLevel(records);
@@ -987,7 +1001,11 @@ function renderDashboard(){
   out += '<div class="card">';
   out += '<div class="card-head"><h2>Comparaison par établissement</h2><span class="hint">% des élèves évalués ayant validé les 8 situations (0 % est un résultat normal, pas une anomalie)</span></div>';
   out += '<div class="search-row"><input class="field search-input" data-field="dashSearch" type="text" placeholder="Filtrer un établissement…" value="' + esc(ui.dashSearch) + '"></div>';
-  out += '<div class="table-wrap"><table><thead><tr><th>Établissement</th><th class="num">Classes</th><th class="num">Effectif</th><th>% ASNS</th><th class="num">Niveau moyen</th></tr></thead><tbody>';
+  out += '<div class="table-wrap"><table><thead><tr><th>Établissement</th><th class="num">Classes</th>';
+  out += sortHeaderTh("Effectif", "effectif", "num");
+  out += sortHeaderTh("% ASNS", "pctSE7", "");
+  out += sortHeaderTh("Niveau moyen", "avgLevel", "num");
+  out += '</tr></thead><tbody>';
   if (!schools.length){
     out += '<tr><td colspan="5"><div class="empty-state">Aucun établissement pour ce filtre.</div></td></tr>';
   }
@@ -1020,6 +1038,12 @@ function renderDashboard(){
 
 function kpi(label, value, sub){
   return '<div class="kpi"><div class="kpi-label">' + esc(label) + '</div><div class="kpi-value">' + value + '</div><div class="kpi-sub">' + esc(sub) + '</div></div>';
+}
+
+function sortHeaderTh(label, key, extraClass){
+  var active = ui.dashSort.key === key;
+  var arrow = active ? '<span class="sort-arrow">' + (ui.dashSort.dir === "asc" ? "▲" : "▼") + '</span>' : "";
+  return '<th class="' + (extraClass||"") + (active?" sorted":"") + '"><button type="button" class="th-sort" data-action="dash-sort" data-sort-key="' + key + '">' + esc(label) + arrow + '</button></th>';
 }
 
 function render(){
@@ -1055,6 +1079,14 @@ document.addEventListener("click", function(e){
     window.scrollTo({top:0, behavior:"smooth"});
   } else if (action === "export-csv"){
     doExportCsv();
+  } else if (action === "dash-sort"){
+    var sortKey = btn.getAttribute("data-sort-key");
+    if (ui.dashSort.key === sortKey){
+      ui.dashSort.dir = ui.dashSort.dir === "asc" ? "desc" : "asc";
+    } else {
+      ui.dashSort = {key: sortKey, dir: "desc"};
+    }
+    persistUi(); render();
   }
 });
 
