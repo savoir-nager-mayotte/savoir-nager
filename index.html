@@ -23,7 +23,7 @@
   --amber:#93610E;
   --amber-pale:#F6E7CC;
   --depth-1:#DCEEEC; --depth-2:#C3E3DF; --depth-3:#A2D5CE; --depth-4:#7BC3B9;
-  --depth-5:#4F9E90; --depth-6:#2E8578; --depth-7:#0E5F58;
+  --depth-5:#4F9E90; --depth-6:#2E8578; --depth-7:#0E5F58; --depth-8:#073F3B;
   --depth-ink-lo:var(--ink);
   --depth-ink-hi:#FFFFFF;
   --shadow:0 1px 2px rgba(19,42,51,.07), 0 8px 22px rgba(19,42,51,.07);
@@ -41,7 +41,7 @@
     --accent:#4FCFC4; --accent-strong:#7EE0D6; --accent-pale:#14403C;
     --coral:#F0895F; --coral-pale:#3A231A; --amber:#E3B15C; --amber-pale:#3A2E14;
     --depth-1:#17302E; --depth-2:#1D3E3A; --depth-3:#245049; --depth-4:#2E6B60;
-    --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB;
+    --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB; --depth-8:#8FF5E3;
     --depth-ink-lo:var(--ink);
     --depth-ink-hi:#052220;
     --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px rgba(0,0,0,.4);
@@ -53,7 +53,7 @@
   --accent:#4FCFC4; --accent-strong:#7EE0D6; --accent-pale:#14403C;
   --coral:#F0895F; --coral-pale:#3A231A; --amber:#E3B15C; --amber-pale:#3A2E14;
   --depth-1:#17302E; --depth-2:#1D3E3A; --depth-3:#245049; --depth-4:#2E6B60;
-  --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB;
+  --depth-5:#3B8B7B; --depth-6:#4FAE9C; --depth-7:#6FE0CB; --depth-8:#8FF5E3;
   --depth-ink-lo:var(--ink);
   --depth-ink-hi:#052220;
   --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px rgba(0,0,0,.4);
@@ -387,7 +387,8 @@ var STATIONS = [
   {code:"SE3", title:"Fusée poussée", hint:"Déplacement subaquatique"},
   {code:"SE4", title:"Body Surf", hint:"Record de distance à partir d’un simple plongeon (5/7m)"},
   {code:"SE5", title:"Posture de réf. + reprise de nage", hint:"Posture de référence puis propulsion sur 8-10m"},
-  {code:"SE6", title:"Idem SE5 + ½ vrille dos", hint:"Reprise avec rotation dorsale"},
+  {code:"SE6", title:"Idem SE5 + ½ vrille dos", hint:"Reprise avec rotation dorsale (17-20m)"},
+  {code:"SE6+", title:"Idem SE6 sur 25m", hint:"Reprise avec rotation dorsale (25m)"},
   {code:"SE7", title:"ASNS", hint:"Attestation du Savoir-Nager en Sécurité"}
 ];
 var LEVELS = ["6e","5e","4e","3e","2nde","1ère","Terminale","Autre"];
@@ -480,20 +481,20 @@ function fmtDate(iso){
 /* ---------- record model ---------- */
 function emptyRecord(year, school, className){
   return {year:year||"", school:school||"", className:className||"", level:"", teacher:"",
-    effectif:null, fail1:null, n:[null,null,null,null,null,null,null], notes:"", updatedAt:null};
+    effectif:null, fail1:null, n:[null,null,null,null,null,null,null,null], notes:"", updatedAt:null};
 }
 /* fail1 = nombre d'élèves qui n'ont pas réussi la situation 1 (niveau 0).
-   n[i] (i=0..6, situation i+1) = nombre d'élèves dont c'est le DERNIER
+   n[i] (i=0..7, situation i+1) = nombre d'élèves dont c'est le DERNIER
    niveau validé : ils ont réussi les situations précédentes mais pas la
-   suivante (n[6] = ont obtenu l'ASNS). Chaque élève évalué compte dans
-   exactement UNE des 8 cases (fail1, n[0]..n[6]) ; leur somme doit être
+   suivante (n[7] = ont obtenu l'ASNS). Chaque élève évalué compte dans
+   exactement UNE des 9 cases (fail1, n[0]..n[7]) ; leur somme doit être
    égale à l'effectif évalué — l'enregistrement est bloqué sinon, donc toute
    fiche enregistrée est par construction complète et exploitable telle
-   quelle (même si aucun élève n'atteint la situation 7 : c'est un résultat
+   quelle (même si aucun élève n'atteint la situation 8 : c'est un résultat
    normal, pas une fiche incomplète). */
 function totalAssigned(r){
   var sum = r.fail1||0;
-  for (var i=0;i<7;i++){ sum += r.n[i]||0; }
+  for (var i=0;i<8;i++){ sum += r.n[i]||0; }
   return sum;
 }
 function isCoherent(r){
@@ -517,14 +518,14 @@ function setStation(rec, idx, raw){
 }
 
 /* ---------- aggregation ---------- */
-/* Niveau final atteint (0 = a échoué la situation 1, 7 = ASNS). Toute fiche
+/* Niveau final atteint (0 = a échoué la situation 1, 8 = ASNS). Toute fiche
    du jeu de données est par construction cohérente (voir isCoherent), donc
    toutes les fiches participent aux statistiques, sans distinction. */
 function levelDistribution(records){
-  var counts = [0,0,0,0,0,0,0,0];
+  var counts = [0,0,0,0,0,0,0,0,0];
   records.forEach(function(r){
     counts[0] += r.fail1||0;
-    for (var k=0;k<7;k++){ counts[k+1] += r.n[k]||0; }
+    for (var k=0;k<8;k++){ counts[k+1] += r.n[k]||0; }
   });
   return counts;
 }
@@ -532,17 +533,17 @@ function avgLevel(records){
   var dist = levelDistribution(records);
   var tot = dist.reduce(function(a,b){return a+b;},0);
   if (!tot) return null;
-  var sum = 0; for (var k=0;k<8;k++){ sum += dist[k]*k; }
+  var sum = 0; for (var k=0;k<9;k++){ sum += dist[k]*k; }
   return sum / tot;
 }
-/* % d'élèves ayant validé AU MOINS la situation i+1 = somme des niveaux i+1 à 7. */
+/* % d'élèves ayant validé AU MOINS la situation i+1 = somme des niveaux i+1 à 8. */
 function stationFunnel(records){
   var denom = records.reduce(function(s,r){ return s + (r.effectif||0); }, 0);
   var out = [];
-  for (var i=0;i<7;i++){
+  for (var i=0;i<8;i++){
     var reached = records.reduce(function(s,r){
       var sum = 0;
-      for (var k=i;k<7;k++){ sum += (r.n[k]||0); }
+      for (var k=i;k<8;k++){ sum += (r.n[k]||0); }
       return s + sum;
     }, 0);
     out.push({idx:i, classes:records.length, reached:reached, denom:denom, pct: denom>0 ? reached/denom*100 : null});
@@ -559,7 +560,7 @@ function perSchoolStats(records){
   return order.map(function(school){
     var recs = map[school];
     var eff = recs.reduce(function(s,r){return s+(r.effectif||0);},0);
-    var se7 = recs.reduce(function(s,r){return s+(r.n[6]||0);},0);
+    var se7 = recs.reduce(function(s,r){return s+(r.n[7]||0);},0);
     return {
       school: school, classes: recs.length,
       effectif: eff, pctSE7: eff>0 ? se7/eff*100 : null,
@@ -737,7 +738,7 @@ function renderHeader(){
   out += '<div class="topbar"><div class="topbar-inner">';
   out += '<p class="eyebrow">Académie de Mayotte' + (ui.isAdmin ? ' <span class="admin-chip">Mode référent</span>' : '') + '</p>';
   out += '<div class="title-row"><h1 class="page-title">Évaluation du dispositif Savoir-Nager</h1>';
-  out += '<span class="subtitle">Suivi des 7 situations d’évaluation, établissement par établissement</span></div>';
+  out += '<span class="subtitle">Suivi des 8 situations d’évaluation, établissement par établissement</span></div>';
   out += waveSvg();
   if (ui.isAdmin){
     out += '<div class="tabs">';
@@ -787,14 +788,14 @@ function renderSaisie(){
   if (ui.current){
     out += '<div class="card">';
     out += '<div class="card-head"><h2>2 · Répartition des élèves par situation</h2><span class="hint">Une case = un dernier niveau validé</span></div>';
-    out += '<p class="section-lede">Pour chaque situation, indiquez combien d’élèves s’y arrêtent : ils ont validé les situations précédentes mais pas la suivante (situation 7 = ont obtenu l’ASNS). Si un·e élève échoue dès la situation 1, comptez-le dans la première case, à part. Chaque élève évalué compte dans une seule case, et la somme des cases doit être exactement égale au nombre d’élèves évalués.</p>';
+    out += '<p class="section-lede">Pour chaque situation, indiquez combien d’élèves s’y arrêtent : ils ont validé les situations précédentes mais pas la suivante (situation 8 = ont obtenu l’ASNS). Si un·e élève échoue dès la situation 1, comptez-le dans la première case, à part. Chaque élève évalué compte dans une seule case, et la somme des cases doit être exactement égale au nombre d’élèves évalués.</p>';
     out += '<div class="field-grid effectif-row" style="margin-top:16px;">';
     out += fieldNumber("Nombre d’élèves évalués", "effectif", ui.current.effectif, 0, 200);
     out += '<div class="field-note" style="align-self:center;">Élèves ayant réellement participé à l’évaluation, y compris ceux qui échouent dès la situation 1 — hors dispensés, absents ou exclus. Ce nombre doit être exactement égal à la somme des cases ci-dessous.</div>';
     out += '</div>';
     out += '<div class="stations">';
     out += renderFail1Card();
-    for (var i=0;i<7;i++){ out += renderStation(i); }
+    for (var i=0;i<8;i++){ out += renderStation(i); }
     out += '</div>';
     out += renderAssignedTotal(ui.current);
     out += '<div class="field" style="margin-top:16px;"><label>Remarques (optionnel)</label>';
@@ -835,7 +836,7 @@ function renderStation(i){
   var depthN = i+1;
   var inkCls = i < 4 ? "var(--depth-ink-lo)" : "var(--depth-ink-hi)";
   var val = rec.n[i];
-  var stopLabel = i===6 ? "ont obtenu l’ASNS" : "s’arrêtent ici";
+  var stopLabel = i===7 ? "ont obtenu l’ASNS" : "s’arrêtent ici";
   var out = '<div class="station" style="background:var(--depth-' + depthN + ');color:' + inkCls + ';border-color:transparent;">';
   out += '<span class="num" style="color:' + inkCls + ';">' + (i+1) + '</span>';
   out += '<span class="st-title">' + esc(st.code) + ' · ' + esc(st.title) + '</span>';
@@ -865,7 +866,7 @@ function renderAssignedTotal(rec){
   var coherent = isCoherent(rec);
   var cls = coherent ? "assigned-total ok" : "assigned-total warn";
   var out = '<div id="assigned-total" class="' + cls + '">';
-  out += 'Total réparti (échec situation 1 + 7 situations) : <strong>' + assigned + (eff==null ? '' : (' / ' + eff)) + '</strong>';
+  out += 'Total réparti (échec situation 1 + 8 situations) : <strong>' + assigned + (eff==null ? '' : (' / ' + eff)) + '</strong>';
   if (eff == null){
     out += ' — indiquez d’abord le nombre d’élèves évalués.';
   } else if (assigned > eff){
@@ -926,7 +927,7 @@ function renderDashboard(){
   var maxDist = Math.max.apply(null, dist.concat([1]));
   var schools = perSchoolStats(records).filter(function(s){ return ui.dashSearch ? s.school.toLowerCase().indexOf(ui.dashSearch.toLowerCase())>=0 : true; });
   var totalEff = records.reduce(function(s,r){return s+(r.effectif||0);},0);
-  var se7 = funnel[6];
+  var se7 = funnel[7];
   var avg = avgLevel(records);
   var distinctSchools = {}; records.forEach(function(r){ if(r.school) distinctSchools[r.school]=true; });
 
@@ -945,12 +946,12 @@ function renderDashboard(){
   out += '<div class="kpi-grid">';
   out += kpi("Élèves évalués", fmtInt(totalEff), records.length + " classe(s) saisie(s)");
   out += kpi("Ont validé l’ASNS (SE7)", fmtInt(se7.reached), (se7.pct==null?"aucune fiche saisie":(fmtPct(se7.pct) + " des élèves évalués")));
-  out += kpi("Niveau moyen atteint", (avg==null?"—":fmtNum1(avg) + '<small> / 7</small>'), "sur " + records.length + " classe(s)");
+  out += kpi("Niveau moyen atteint", (avg==null?"—":fmtNum1(avg) + '<small> / 8</small>'), "sur " + records.length + " classe(s)");
   out += kpi("Établissements", fmtInt(Object.keys(distinctSchools).length), records.length + " fiche(s) de classe au total");
   out += '</div>';
 
   out += '<div class="card">';
-  out += '<div class="card-head"><h2>Progression dans les 7 situations</h2><span class="hint">% d’élèves évalués ayant validé au moins cette situation</span></div>';
+  out += '<div class="card-head"><h2>Progression dans les 8 situations</h2><span class="hint">% d’élèves évalués ayant validé au moins cette situation</span></div>';
   out += '<div class="funnel">';
   funnel.forEach(function(f){
     var st = STATIONS[f.idx];
@@ -966,18 +967,18 @@ function renderDashboard(){
   out += '<div class="card">';
   out += '<div class="card-head"><h2>Niveau final atteint</h2><span class="hint">Tous les élèves évalués (0 = SE1 non validée)</span></div>';
   out += '<div class="hist">';
-  for (var k=0;k<8;k++){
+  for (var k=0;k<9;k++){
     var h = maxDist>0 ? Math.round((dist[k]/maxDist)*100) : 0;
     var depthIdx = k===0 ? 1 : k;
     var inkc = k<=4 ? "var(--depth-ink-lo)" : "var(--depth-ink-hi)";
     out += '<div class="hist-col"><div class="hist-bar" style="height:' + Math.max(h,3) + '%;background:var(--depth-' + depthIdx + ');color:' + inkc + ';"><span>' + fmtInt(dist[k]) + '</span></div>';
-    var axisCaption = k===0 ? "SE1 non validée" : (k===7 ? "ASNS validée" : "jusqu’à SE" + k);
+    var axisCaption = k===0 ? "SE1 non validée" : (k===8 ? "ASNS validée" : "jusqu’à " + STATIONS[k-1].code);
     out += '<div class="hist-axis"><b>' + k + '</b>' + esc(axisCaption) + '</div></div>';
   }
   out += '</div></div>';
 
   out += '<div class="card">';
-  out += '<div class="card-head"><h2>Comparaison par établissement</h2><span class="hint">% des élèves évalués ayant validé les 7 situations (0 % est un résultat normal, pas une anomalie)</span></div>';
+  out += '<div class="card-head"><h2>Comparaison par établissement</h2><span class="hint">% des élèves évalués ayant validé les 8 situations (0 % est un résultat normal, pas une anomalie)</span></div>';
   out += '<div class="search-row"><input class="field search-input" data-field="dashSearch" type="text" placeholder="Filtrer un établissement…" value="' + esc(ui.dashSearch) + '"></div>';
   out += '<div class="table-wrap"><table><thead><tr><th>Établissement</th><th class="num">Classes</th><th class="num">Effectif</th><th>% ASNS</th><th class="num">Niveau moyen</th></tr></thead><tbody>';
   if (!schools.length){
@@ -986,7 +987,7 @@ function renderDashboard(){
   schools.forEach(function(s){
     out += '<tr><td class="school-table-name">' + esc(s.school) + '</td><td class="num">' + s.classes + '</td><td class="num">' + fmtInt(s.effectif) + '</td>';
     out += '<td><span class="mini-bar"><span class="bar-track"><span class="bar-fill" style="display:block;width:' + (s.pctSE7||0) + '%;background:var(--accent);"></span></span><span class="val">' + (s.pctSE7==null?"—":fmtPct(s.pctSE7)) + '</span></span></td>';
-    out += '<td class="num">' + (s.avgLevel==null?"—":fmtNum1(s.avgLevel) + " / 7") + '</td></tr>';
+    out += '<td class="num">' + (s.avgLevel==null?"—":fmtNum1(s.avgLevel) + " / 8") + '</td></tr>';
   });
   out += '</tbody></table></div></div>';
 
@@ -998,7 +999,7 @@ function renderDashboard(){
     out += '<tr><td colspan="7"><div class="empty-state">Aucune fiche saisie pour cette année.</div></td></tr>';
   }
   sortedRecords.forEach(function(r){
-    var asns = r.n[6]||0;
+    var asns = r.n[7]||0;
     var pillCls = asns>0 ? "pill-done" : "pill-none";
     out += '<tr><td class="school-table-name">' + esc(r.school) + '</td><td>' + esc(r.className) + '</td><td>' + esc(r.level||"—") + '</td>';
     out += '<td class="num">' + fmtInt(r.effectif) + '</td><td><span class="pill ' + pillCls + '">' + asns + ' / ' + fmtInt(r.effectif) + '</span></td>';
@@ -1167,7 +1168,7 @@ document.addEventListener("change", function(e){
 function doExportCsv(){
   var records = recordsForYear(ui.dashYear);
   var headers = ["Année","Établissement","Classe","Niveau","Enseignant","Élèves_évalués","Échec_SE1",
-    "Arrêt_SE1_Apnée","Arrêt_SE2_Bouchon","Arrêt_SE3_Fusée","Arrêt_SE4_BodySurf","Arrêt_SE5_Posture","Arrêt_SE6_Vrille","Arrêt_SE7_ASNS","MàJ"];
+    "Arrêt_SE1_Apnée","Arrêt_SE2_Bouchon","Arrêt_SE3_Fusée","Arrêt_SE4_BodySurf","Arrêt_SE5_Posture","Arrêt_SE6_Vrille","Arrêt_SE6+_Vrille25m","Arrêt_SE7_ASNS","MàJ"];
   function csvField(v){
     if (v == null) return "";
     var s = String(v);
