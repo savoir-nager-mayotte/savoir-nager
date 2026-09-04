@@ -189,6 +189,14 @@ h1.page-title{font-size:clamp(26px,3.6vw,34px);}
 }
 .station input:disabled{opacity:.45;}
 .station .st-max{font-size:10.5px;opacity:.75;text-align:center;}
+.fail1-standalone{
+  flex-direction:row;align-items:center;min-height:auto;margin-top:16px;gap:14px;flex-wrap:wrap;
+}
+.fail1-standalone .fail1-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:180px;}
+.fail1-standalone .st-title{min-height:0;}
+.fail1-standalone input{margin-top:0;width:90px;flex:none;}
+.fail1-standalone .st-max{text-align:left;flex:none;}
+@media (max-width:520px){.fail1-standalone{flex-direction:column;align-items:stretch;}.fail1-standalone input{width:100%;}}
 .assigned-total{margin-top:12px;font-size:13px;color:var(--ink-soft);}
 .assigned-total strong{font-family:var(--font-mono);color:var(--ink);}
 .assigned-total.warn{color:var(--coral);}
@@ -793,8 +801,8 @@ function renderSaisie(){
     out += fieldNumber("Nombre d’élèves évalués", "effectif", ui.current.effectif, 0, 200);
     out += '<div class="field-note" style="align-self:center;">Élèves ayant réellement participé à l’évaluation, y compris ceux qui échouent dès la situation 1 — hors dispensés, absents ou exclus. Ce nombre doit être exactement égal à la somme des cases ci-dessous.</div>';
     out += '</div>';
-    out += '<div class="stations">';
     out += renderFail1Card();
+    out += '<div class="stations">';
     for (var i=0;i<8;i++){ out += renderStation(i); }
     out += '</div>';
     out += renderAssignedTotal(ui.current);
@@ -850,10 +858,9 @@ function renderStation(i){
 function renderFail1Card(){
   var rec = ui.current;
   var val = rec.fail1;
-  var out = '<div class="station fail1">';
+  var out = '<div class="station fail1 fail1-standalone">';
   out += '<span class="num">0</span>';
-  out += '<span class="st-title">N’ont pas réussi la situation 1</span>';
-  out += '<span class="st-hint">Apnée inspiratoire non validée</span>';
+  out += '<div class="fail1-text"><span class="st-title">N’ont pas réussi la situation 1</span><span class="st-hint">Apnée inspiratoire non validée</span></div>';
   out += '<input type="number" min="0" inputmode="numeric" data-field="fail1" ' + (ui.readOnly?"disabled":"") + ' value="' + (val==null?"":val) + '" placeholder="0">';
   out += '<span class="st-max">élèves qui échouent dès la situation 1</span>';
   out += '</div>';
