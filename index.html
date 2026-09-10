@@ -401,7 +401,7 @@ var STATIONS = [
   {code:"SE4", title:"Body Surf", hint:"Record de distance à partir d’un simple plongeon (5/7m)"},
   {code:"SE5", title:"Posture de réf. + reprise de nage", hint:"Posture de référence puis propulsion sur 8-10m"},
   {code:"SE6", title:"Idem SE5 + ½ vrille dos", hint:"Propulsion et 1/2 vrille pour respirer sur 15-20m"},
-  {code:"SE6+", title:"Idem SE6 sur 25m", hint:"Propulsion et 1/2 vrille pour respirer sur 25m ou +"},
+  {code:"SE6+", title:"Parcours 30m aller-retour (15m/15m)", hint:"6 actions à réaliser"},
   {code:"SE7", title:"ASNS", hint:"Attestation du Savoir-Nager en Sécurité"}
 ];
 var LEVELS = ["6e","5e","4e","3e","2nde","1ère","Terminale","Autre"];
@@ -1207,7 +1207,7 @@ document.addEventListener("change", function(e){
 function doExportCsv(){
   var records = recordsForYear(ui.dashYear);
   var headers = ["Année","Établissement","Classe","Niveau","Enseignant","Élèves_évalués","Échec_SE1",
-    "Arrêt_SE1_Apnée","Arrêt_SE2_Bouchon","Arrêt_SE3_Fusée","Arrêt_SE4_BodySurf","Arrêt_SE5_Posture","Arrêt_SE6_Vrille","Arrêt_SE6+_Vrille25m","Arrêt_SE7_ASNS","MàJ"];
+    "Arrêt_SE1_Apnée","Arrêt_SE2_Bouchon","Arrêt_SE3_Fusée","Arrêt_SE4_BodySurf","Arrêt_SE5_Posture","Arrêt_SE6_Vrille","Arrêt_SE6+_30m","Arrêt_SE7_ASNS","MàJ"];
   function csvField(v){
     if (v == null) return "";
     var s = String(v);
