@@ -420,6 +420,12 @@ var STATIONS = [
   {code:"SE7", title:"ASNS", hint:"Attestation du Savoir-Nager en Sécurité"}
 ];
 var LEVELS = ["6e","5e","4e","3e","2nde","1ère","Terminale","Autre"];
+/* Les fiches enregistrées avant cette date (tests/rodage de l'outil) restent
+   dans le tableur mais sont exclues de tout l'outil (tableau de bord,
+   export…) : on ne compte que les données saisies à partir de maintenant.
+   Ressaisir une classe archivée la fait réapparaître normalement (sa date de
+   mise à jour redevient récente). */
+var DATA_RESET_AT = "2026-09-11T07:45:00.000Z";
 
 /* Établissements publics du second degré de Mayotte (collèges et lycées polyvalents),
    d'après la présentation de l'académie de Mayotte (ac-mayotte.fr) et le livret
@@ -751,7 +757,10 @@ function deleteCurrent(){
 }
 
 /* ---------- rendering ---------- */
-function allRecords(){ return Object.keys(state.classes).map(function(k){ return state.classes[k]; }); }
+function allRecords(){
+  return Object.keys(state.classes).map(function(k){ return state.classes[k]; })
+    .filter(function(r){ return (r.updatedAt||"") >= DATA_RESET_AT; });
+}
 function recordsForYear(y){
   var all = allRecords();
   return y === "__all__" ? all : all.filter(function(r){ return r.year === y; });
