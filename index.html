@@ -225,6 +225,21 @@ h1.page-title{font-size:clamp(26px,3.6vw,34px);}
 
 /* dashboard */
 .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:18px 0 4px;}
+.dash-subtabs{display:flex;gap:4px;margin:16px 0 4px;border-bottom:1px solid var(--border);}
+.tab-btn.sub{font-size:13.5px;padding:9px 4px;margin-right:18px;}
+.subtab-count{
+  display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+  border-radius:99px;background:var(--accent-pale);color:var(--accent-strong);
+  font-family:var(--font-mono);font-size:11px;font-weight:700;padding:0 5px;margin-left:4px;
+}
+.remark-list{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.remark-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;background:var(--surface-alt);}
+.remark-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;}
+.remark-title{font-weight:700;font-size:14.5px;}
+.remark-class{font-weight:500;color:var(--ink-soft);font-size:13px;margin-left:6px;}
+.remark-meta{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-faint);white-space:nowrap;}
+.remark-text{font-size:14px;color:var(--ink);margin-top:8px;white-space:pre-wrap;line-height:1.45;}
+.remark-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;font-size:12px;color:var(--ink-faint);}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;}
 @media (max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:520px){.kpi-grid{grid-template-columns:1fr;}}
@@ -609,7 +624,8 @@ var ui = {
   loadState: "loading",
   dashYear: currentSchoolYear(),
   dashSearch: "",
-  dashSort: {key:"pctSE7", dir:"desc"}
+  dashSort: {key:"pctSE7", dir:"desc"},
+  dashSubTab: "overview"
 };
 try {
   var uiRaw = sessionStorage.getItem("sn_ui");
@@ -619,6 +635,7 @@ try {
     if (savedUi && savedUi.identity) ui.identity = savedUi.identity;
     if (savedUi && savedUi.dashYear) ui.dashYear = savedUi.dashYear;
     if (savedUi && savedUi.dashSort && savedUi.dashSort.key) ui.dashSort = savedUi.dashSort;
+    if (savedUi && savedUi.dashSubTab) ui.dashSubTab = savedUi.dashSubTab;
   }
 } catch(e){}
 if (!ui.isAdmin) ui.tab = "saisie";
@@ -626,7 +643,7 @@ loadCurrentFromIdentity();
 
 function persistUi(){
   try {
-    sessionStorage.setItem("sn_ui", JSON.stringify({tab:ui.tab, identity:ui.identity, dashYear:ui.dashYear, dashSort:ui.dashSort}));
+    sessionStorage.setItem("sn_ui", JSON.stringify({tab:ui.tab, identity:ui.identity, dashYear:ui.dashYear, dashSort:ui.dashSort, dashSubTab:ui.dashSubTab}));
   } catch(e){}
 }
 
@@ -941,6 +958,31 @@ function fieldNumber(label, key, val, min, max){
 }
 
 /* ---------- dashboard ---------- */
+function renderDashboardRemarks(records){
+  var withNotes = records.filter(function(r){ return (r.notes||"").trim() !== ""; })
+    .sort(function(a,b){ return (b.updatedAt||"").localeCompare(a.updatedAt||""); });
+  var out = '<div class="card">';
+  out += '<div class="card-head"><h2>Remarques des enseignant·e·s</h2><span class="hint">À croiser avec les résultats pour juger de leur pertinence (conditions de passation, incidents…)</span></div>';
+  if (!withNotes.length){
+    out += '<div class="empty-state">Aucune remarque saisie pour cette année.</div>';
+  } else {
+    out += '<div class="remark-list">';
+    withNotes.forEach(function(r){
+      var asns = r.n[7]||0;
+      var classAvg = avgLevel([r]);
+      out += '<div class="remark-card">';
+      out += '<div class="remark-head"><div class="remark-title">' + esc(r.school) + '<span class="remark-class">' + esc(r.className) + (r.level ? ' · ' + esc(r.level) : '') + '</span></div>';
+      out += '<div class="remark-meta">Effectif ' + fmtInt(r.effectif) + ' · ASNS ' + asns + '/' + fmtInt(r.effectif) + ' · Niveau moyen ' + (classAvg==null?"—":fmtNum1(classAvg) + ' / 8') + '</div></div>';
+      out += '<p class="remark-text">' + esc(r.notes) + '</p>';
+      out += '<div class="remark-footer"><span>Mis à jour le ' + fmtDate(r.updatedAt) + '</span><button class="btn btn-ghost btn-sm" data-action="edit-record" data-year="' + esc(r.year) + '" data-school="' + esc(r.school) + '" data-classname="' + esc(r.className) + '">Modifier</button></div>';
+      out += '</div>';
+    });
+    out += '</div>';
+  }
+  out += '</div>';
+  return out;
+}
+
 function renderDashboard(){
   var records = recordsForYear(ui.dashYear);
   var funnel = stationFunnel(records);
@@ -963,6 +1005,18 @@ function renderDashboard(){
   out += '<button class="btn btn-ghost btn-sm" data-action="refresh-data" ' + (ui.loadState==="loading"?"disabled":"") + '>' + (ui.loadState==="loading"?"Actualisation…":"Actualiser") + '</button>';
   out += '<button class="btn btn-ghost btn-sm" data-action="export-csv">Exporter en CSV</button>';
   out += '</div>';
+
+  var notesCount = records.filter(function(r){ return (r.notes||"").trim() !== ""; }).length;
+  out += '<div class="dash-subtabs">';
+  out += '<button class="tab-btn sub' + (ui.dashSubTab!=="remarks"?" active":"") + '" data-action="dash-subtab" data-subtab="overview">Vue d’ensemble</button>';
+  out += '<button class="tab-btn sub' + (ui.dashSubTab==="remarks"?" active":"") + '" data-action="dash-subtab" data-subtab="remarks">Remarques' + (notesCount?' <span class="subtab-count">' + notesCount + '</span>':'') + '</button>';
+  out += '</div>';
+
+  if (ui.dashSubTab === "remarks"){
+    out += renderDashboardRemarks(records);
+    out += '</div>';
+    return out;
+  }
 
   out += '<div class="kpi-grid">';
   out += kpi("Élèves évalués", fmtInt(totalEff), records.length + " classe(s) saisie(s)");
@@ -1086,6 +1140,9 @@ document.addEventListener("click", function(e){
     } else {
       ui.dashSort = {key: sortKey, dir: "desc"};
     }
+    persistUi(); render();
+  } else if (action === "dash-subtab"){
+    ui.dashSubTab = btn.getAttribute("data-subtab");
     persistUi(); render();
   }
 });
