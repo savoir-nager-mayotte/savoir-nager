@@ -836,7 +836,7 @@ function renderSaisie(){
   if (ui.current){
     out += '<div class="card">';
     out += '<div class="card-head"><h2>2 · Répartition des élèves par situation</h2><span class="hint">Une case = un dernier niveau validé</span></div>';
-    out += '<p class="section-lede">Pour chaque situation, indiquez combien d’élèves s’y arrêtent : ils ont validé les situations précédentes mais pas la suivante (situation 8 = ont obtenu l’ASNS). Si un·e élève échoue dès la situation 1, comptez-le dans la première case, à part. Chaque élève évalué compte dans une seule case, et la somme des cases doit être exactement égale au nombre d’élèves évalués.</p>';
+    out += '<p class="section-lede">Chaque élève se compte dans la case de la <strong>dernière situation réussie</strong>, pas celle où il échoue. Exemple : réussi jusqu’à la SE4, échoué à la SE5 → il compte dans la case SE4. Échec dès la situation 1 → case à part, tout à gauche. Un seul élève, une seule case : la somme doit être exactement égale au nombre d’élèves évalués.</p>';
     out += '<div class="field-grid effectif-row" style="margin-top:16px;">';
     out += fieldNumber("Nombre d’élèves évalués", "effectif", ui.current.effectif, 0, 200);
     out += '<div class="field-note" style="align-self:center;">Élèves ayant réellement participé à l’évaluation, y compris ceux qui échouent dès la situation 1 — hors dispensés, absents ou exclus. Ce nombre doit être exactement égal à la somme des cases ci-dessous.</div>';
